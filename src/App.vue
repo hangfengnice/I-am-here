@@ -1,25 +1,26 @@
 <template>
   <div id="app">
-    app
+    <Header />
     <router-view/>
   </div>
 </template>
 
-<style lang="scss">
+<script>
+import Header from './components/header'
+
+export default {
+  name: "app",
+  components: {
+    Header
+  }
+}
+</script>
+
+<style lang="scss" scoped>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  height: 100%;
-  width: 750px;
-  display: flex;
-  flex: column;
-  align-items: center;
-  justify-content: space-around;
-  box-sizing: border-box;
-
 }
-
 </style>

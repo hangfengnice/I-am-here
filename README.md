@@ -16,3 +16,7 @@ npm start
 - node v10.16.0
 - npm v6.10.2
 - vue-cli 3.9.2
+
+## 项目细节
+
+- h

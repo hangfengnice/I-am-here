@@ -41,3 +41,15 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+html,
+body{
+	height: 100%;
+  margin: 0 auto;
+  width: 750px;
+  /* display: flex; */
+  /* flex: column; */
+  /* align-items: center; */
+  /* justify-content: space-around; */
+  box-sizing: border-box;
+}
