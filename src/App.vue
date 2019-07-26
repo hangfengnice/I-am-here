@@ -1,17 +1,20 @@
 <template>
   <div id="app">
     <Header />
+    <Title :back='true' />
     <router-view/>
   </div>
 </template>
 
 <script>
 import Header from './components/header'
+import Title from './components/title'
 
 export default {
   name: "app",
   components: {
-    Header
+    Header,
+    Title
   }
 }
 </script>

@@ -19,4 +19,19 @@ npm start
 
 ## 项目细节
 
-- h
+- 实时显示时间
+  - setInterval
+
+  ```javascript
+  timeNow(){
+      clearInterval(this.timer)  // 清除定时器  
+      this.timer = null
+      this.timeFormat(new Date())
+      this.timer = setInterval(this.timeNow,10*1000)
+    }
+  ```
+
+- img 动态引入
+ `<img :src="false ? require('./images/like.png') : require('./images/like@dis.png')" alt />`
+
+- axios

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { setInterval } from "timers";
+import { setInterval, clearInterval } from "timers";
 export default {
   name: "appheader",
   data(){
@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     timeFormat(timeNow) {
-      this.timer = null
       let time = new Date(timeNow);
       let hour = time.getHours();
       let min = time.getMinutes();
@@ -33,9 +32,10 @@ export default {
       this.time =  hour + ":" + min;
     },
     timeNow(){
-      console.log(1,this.timer)
+      clearInterval(this.timer)
+      this.timer = null
       this.timeFormat(new Date())
-      this.timer = setInterval(this.timeNow,1000)
+      this.timer = setInterval(this.timeNow,10*1000)
     }
   }
 };
@@ -56,6 +56,7 @@ export default {
   .time{
     flex: 1;
     text-align: center;
+    padding-right: 64px;
   }
   .wifi{
     margin-bottom: 5px;

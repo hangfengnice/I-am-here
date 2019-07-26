@@ -1,11 +1,10 @@
 
-export const mutations = {
-  [types.SET_USER](state, user){
-    if(user)state.user = user
-    else state.user = {}
+export default {
+  updatClassic(state, data){
+    state.classic = data
   },
-  [types.SET_TARGET_USER](state, targetUser){
-    if(targetUser)state.targetUser = targetUser
-    else state.targetUser = {}
+  changeLikeCount(state, data){
+    state.classic.like_status = data.like_status
+    state.classic.fav_nums = data.fav_nums
   }
 }
