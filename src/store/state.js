@@ -1,4 +1,5 @@
 
 export default {
-  classic: {}
+  classic: {},
+  books: []
 }

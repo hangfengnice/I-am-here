@@ -10,6 +10,8 @@
     <Essay v-if='classic.type == 300' />
 
     <Navi @left='onNext' @right='onPrevious' class='navi' :first='first' :latest='latest' />
+
+    <TabBar/>
   </div>
 </template>
 
@@ -19,6 +21,7 @@ import Movie from '../components/classic/movie'
 import Music from '../components/classic/music'
 import Essay from '../components/classic/essay'
 import Navi from '../components/navi'
+import TabBar from '../components/tabBar'
 import Episode from '../components/episode'
 import {ClassicModel} from '../models/classic'
 import {LikeModel} from '../models/like'
@@ -34,7 +37,8 @@ export default {
     Episode,
     Navi,
     Music,
-    Essay
+    Essay,
+    TabBar
   },
   data(){
     return {
@@ -92,6 +96,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 55px;
 }
 .header{
   display: flex;
@@ -114,7 +119,8 @@ export default {
 }
 .navi{
   position: absolute;
-  bottom: 40px;
+  bottom: 66px;
 }
+
 
 </style>

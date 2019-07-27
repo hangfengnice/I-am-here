@@ -40,3 +40,14 @@ npm start
   - 解决重复问题
 
 - 封装函数 理解 变相的注释 易读
+
+- Promise
+
+- flex 布局 && 绝对定位 fixed 定位
+
+- 组件传参
+  - `this.$router.push({ name: "book-detail", params: { bid } });`
+  - 组件中接受 `this.$route`
+
+- keep-alive
+  - activated(每一次页面进入都会执行)

@@ -45,6 +45,7 @@ export default {
 .container {
   display: flex;
   align-items: center;
+  width: 550px;
   .dash{
     font-size: 30px;
     padding-right: 10px;
