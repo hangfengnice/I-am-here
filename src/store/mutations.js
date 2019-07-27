@@ -1,6 +1,6 @@
 
 export default {
-  updatClassic(state, data){
+  updateClassic(state, data){
     state.classic = data
   },
   changeLikeCount(state, data){

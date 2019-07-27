@@ -33,7 +33,6 @@ export default {
     onLike(e){
       let count = this.count
       let like = this.like
-      console.log(like)
       this.count = like ? count - 1 : count + 1
       this.like = !like
       this.$store.commit('changeLikeCount',{

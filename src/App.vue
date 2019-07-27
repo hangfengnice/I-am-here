@@ -9,6 +9,9 @@
 <script>
 import Header from './components/header'
 import Title from './components/title'
+import {ClassicModel} from './models/classic'
+
+const classicModel = new ClassicModel()
 
 export default {
   name: "app",

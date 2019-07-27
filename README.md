@@ -35,3 +35,8 @@ npm start
  `<img :src="false ? require('./images/like.png') : require('./images/like@dis.png')" alt />`
 
 - axios
+
+- mixins
+  - 解决重复问题
+
+- 封装函数 理解 变相的注释 易读

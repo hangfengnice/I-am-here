@@ -26,7 +26,7 @@ export default {
 .container {
   display: flex;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 2px;
   .title{
     flex: 1;
     text-align: center;

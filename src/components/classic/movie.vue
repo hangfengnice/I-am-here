@@ -7,19 +7,15 @@
 </template>
 
 <script>
+import {behavior} from './mixin'
+
 export default {
   name: "movie",
+  mixins: [behavior],
   data() {
     return {};
   },
-  computed: {
-    img(){
-      return this.$store.getters.classic.image
-    },
-    content(){
-      return this.$store.getters.classic.content
-    }
-  }
+
 };
 </script>
 
