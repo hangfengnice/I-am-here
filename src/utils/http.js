@@ -27,7 +27,7 @@ class HTTP {
         params.success && params.success(res)
         Message({
           type: "success",
-          message: "信息获取成功", 
+          message: "有新的数据更新 @ @", 
         })
       }
     },

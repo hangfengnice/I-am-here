@@ -18,4 +18,24 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .class-img {
+    width: 550px;
+    height: 350px;
+  }
+  .tag {
+    width: 23px;
+    height: 72px;
+    position: relative;
+    right: 240px;
+    bottom: 30px;
+  }
+  .content {
+    font-size: 18px;
+    max-width: 420px;
+  }
+}
 </style>

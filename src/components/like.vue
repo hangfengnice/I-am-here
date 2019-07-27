@@ -16,6 +16,9 @@ export default {
       noSrc: require('./images/like@dis.png')
     }
   },
+  created(){
+    console.log()
+  },
   computed: {
     like1(){
       let like = this.$store.getters.classic.like_status
