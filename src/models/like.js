@@ -2,7 +2,6 @@ import {HTTP} from '../utils/http'
 
 class LikeModel extends HTTP{
   like(behavior, artID, category){
-    console.log(artID, category)
     let url = behavior == 'like' ? 'like' : 'like/cancel'
     this.request({
       url,
@@ -21,7 +20,7 @@ class LikeModel extends HTTP{
     })
   }
 
-  
+
 }
 
 export {LikeModel}

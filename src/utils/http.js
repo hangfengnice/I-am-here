@@ -25,10 +25,10 @@ class HTTP {
       let code = res.status.toString()
       if(code.startsWith('2')){
         params.success && params.success(res)
-        Message({
-          type: "success",
-          message: "有新的数据更新 @ @", 
-        })
+        // Message({
+        //   type: "success",
+        //   message: "有新的数据更新 @ @", 
+        // })
       }
     },
       err => {

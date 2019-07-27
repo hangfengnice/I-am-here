@@ -68,7 +68,6 @@ export default {
     _updateClassic(nextOrPrevious){
       let index = this.classic.index
       classicModel.getClassic(index, nextOrPrevious, res => {
-        console.log(res)
         this._getLikeStatus(res.id, res.type)
         this.$store.commit('updateClassic', res)
         this.latest = classicModel.isLatest(res.index)
@@ -117,4 +116,5 @@ export default {
   position: absolute;
   bottom: 40px;
 }
+
 </style>
