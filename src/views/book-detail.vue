@@ -49,8 +49,9 @@
       <div class="post-fake">
         <span>输入短评</span>
       </div>
+      <!-- like 组件 -->
       <div class="like-container">
-        <Like @like='onLike' class='like' />
+        <Like  @like='onLike' class='like' :likeStatus='Boolean(likeStatus)' :likeCount='likeCount' />
       </div>
     </div>
   </div>
@@ -58,10 +59,12 @@
 
 <script>
 import { BookModel } from "../models/book";
+import {LikeModel} from '../models/like'
 import Tag from "../components/tag";
 import Like from '../components/like'
-const bookModel = new BookModel();
 
+const bookModel = new BookModel();
+const likeModel = new LikeModel()
 export default {
   name: "book-detail",
   data() {
@@ -93,8 +96,8 @@ export default {
     });
   },
   methods: {
-    onLike(){
-      
+    onLike(e){
+      likeModel.like(e, this.book.id, 400)
     }
   },
   filters: {
