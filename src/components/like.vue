@@ -14,8 +14,8 @@ export default {
   },
   data(){
     return {
-      count: 0,
-      like: false,
+      count: this.likeCount,
+      like: this.likeStatus,
       yesSrc: require('./images/like.png'),
       noSrc: require('./images/like@dis.png')
     }

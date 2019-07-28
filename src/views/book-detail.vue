@@ -45,26 +45,45 @@
     </div>
 
     <!-- 输入短评 -->
-    <div class="post-container">
-      <div class="post-fake">
+    <div class="post-container" v-if='!posting'>
+      <div @click="onFakePost" class="post-fake">
         <span>输入短评</span>
       </div>
       <!-- like 组件 -->
       <div class="like-container">
-        <Like  @like='onLike' class='like' :likeStatus='Boolean(likeStatus)' :likeCount='likeCount' />
+        <Like @like="onLike" class="like" :likeStatus="Boolean(likeStatus)" :likeCount="likeCount" />
       </div>
     </div>
+
+    <!-- 点击出现的区域 真正的评论框 -->
+    <div class="posting-container" v-else>
+      <div class="post-header">
+        <span>点击可以 +1</span>
+        <span @click='onCancel' class="cancel">取消</span>
+      </div>
+      <div class="comment_container">
+        <Tag class="com_tag" v-for="(item, index) of limit(comments, 3)" :key="index" :text="item.content">
+          <template v-slot:after>
+            <span class="num">{{"+" + item.nums}}</span>
+          </template>
+        </Tag>
+      </div>
+      <input type="text" placeholder="评论最多12字符" class="post" />
+    </div>
+    <!-- mask 蒙层  -->
+    <MaskFull v-if='posting' />
   </div>
 </template>
 
 <script>
 import { BookModel } from "../models/book";
-import {LikeModel} from '../models/like'
+import { LikeModel } from "../models/like";
 import Tag from "../components/tag";
-import Like from '../components/like'
+import Like from "../components/like";
+import MaskFull from '../components/mask'
 
 const bookModel = new BookModel();
-const likeModel = new LikeModel()
+const likeModel = new LikeModel();
 export default {
   name: "book-detail",
   data() {
@@ -73,12 +92,14 @@ export default {
       book: {},
       author: "author",
       likeStatus: false,
-      likeCount: 0
+      likeCount: 0,
+      posting: false
     };
   },
   components: {
     Tag,
-    Like
+    Like,
+    MaskFull
   },
   activated() {
     const bid = this.$route.params.bid;
@@ -96,8 +117,18 @@ export default {
     });
   },
   methods: {
-    onLike(e){
-      likeModel.like(e, this.book.id, 400)
+    onLike(e) {
+      likeModel.like(e, this.book.id, 400);
+    },
+    onFakePost() {
+      this.posting = true;
+    },
+    onCancel(){
+      this.posting = false
+    },
+    limit(array, length){
+      console.log(array)
+      return array.slice(0, length)
     }
   },
   filters: {
@@ -149,6 +180,8 @@ export default {
 
   .sub-container {
     width: 550px;
+    padding: 10px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -184,9 +217,9 @@ export default {
       }
     }
     .content {
-    text-indent: 2rem;
-    font-weight: 500;
-  }
+      text-indent: 2rem;
+      font-weight: 500;
+    }
   }
 
   .detail-container {
@@ -223,32 +256,27 @@ export default {
     justify-content: space-between;
     /* z-index: 99; */
     .post-fake {
-    height: 30px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 350px;
-    border: 1px solid #999;
-    border-radius: 15px;
-    font-size: 13px;
-    padding-left: 12px;
+      height: 30px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 350px;
+      border: 1px solid #999;
+      border-radius: 15px;
+      font-size: 13px;
+      padding-left: 12px;
+    }
+    .like-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .like {
+        margin-right: 16px;
+        margin-top: 4px;
+      }
+    }
   }
-  }
-
-  
-
-  .like {
-    margin-right: 30rpx;
-    margin-top: 10rpx;
-  }
-
-  .like-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   /* 下方输入框 positing */
   .posting-container {
     bottom: 0;
@@ -258,18 +286,56 @@ export default {
     align-items: center;
     /* width:690rpx; */
     background-color: #fff;
-    width: 100%;
-    z-index: 999;
-    .like-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    .like {
-    margin-right: 14px;
-    margin-top: 6px;
-  }
-  }
+    width: 550px;
+    box-sizing: border-box;
+    z-index: 2;
+    .post-header {
+      width: 100%;
+      border-bottom: 1px solid #f5f5f5;
+      border-top: 1px solid #f5f5f5;
+      height: 50px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      text:first-child {
+        font-size: 14px;
+        color: #bbb;
+      }
+      .cancel {
+        color: #666;
+      }
+    }
+    .comment_container {
+      width: 550px;
+      padding: 16px 30px;
+      .com_tag{
+        margin-right: 8px;
+      }
+      .num {
+          margin-left: 4px;
+          font-size: 14px;
+          color: #aaa;
+        }
+      .com_tag:nth-child(1) {
+        background-color: #fffbdd;
+      }
+
+      .com_tag:nth-child(2) {
+        background-color: #eefbff;
+      }
+    }
+    .post {
+      box-sizing: border-box;
+      width: 450px;
+      margin: 14px auto;
+      height: 40px;
+      background-color: #f5f5f5;
+      border-radius: 15px;
+      padding: 0 20px;
+      outline: none;
+      border: none;
+    }
   }
 
   .share-btn {
@@ -283,74 +349,8 @@ export default {
     height: 40rpx;
   }
 
-  .posting-container .comment_container {
-    width: 690rpx;
-    padding: 0 30rpx;
-  }
-
-  .post {
-    width: 690rpx;
-    margin: 30rpx auto;
-    height: 56rpx;
-    background-color: #f5f5f5;
-    border-radius: 15px;
-    padding-left: 25rpx;
-  }
-
-  .post-header {
-    width: 100%;
-    border-bottom: 1px solid #f5f5f5;
-    border-top: 1px solid #f5f5f5;
-    height: 100rpx;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .post-header > text:first-child {
-    font-size: 28rpx;
-    color: #bbb;
-  }
-
-  .cancel {
-    color: #666;
-  }
-
   .post-header text {
     padding: 25rpx;
-  }
-
-  .num {
-    margin-left: 5px;
-    font-size: 22rpx;
-    color: #aaa;
-  }
-
-  .comment_container > tag-cmp:first-child view {
-    background-color: #fffbdd;
-  }
-
-  /* .comment_container > tag-cmp:nth-child(2) view{
-   background-color: #eefbff;
-} */
-
-  /* .tag view{
-  border-radius: 15px;
-} */
-
-  .tag {
-    margin-right: 15rpx;
-    margin-bottom: 10rpx;
-    border-radius: 15px !important;
-  }
-
-  .comment_container > tag-cmp:nth-child(2) view {
-    background-color: #eefbff !important;
-  }
-
-  .posting-container .comment_container {
-    padding: 40rpx 30rpx 0 30rpx;
   }
 
   .detail-contaner {
