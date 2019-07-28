@@ -51,3 +51,38 @@ npm start
 
 - keep-alive
   - activated(每一次页面进入都会执行)
+
+- 插槽 slot (vue 2.6)
+
+```html  
+<!-- template 不产生多余的标签 -->
+<template v-slot:after>
+  <span class='num'>{{"+" + item.nums}}</span>
+</template>
+```
+
+- 转义字符 \
+  - \\n
+
+- 过滤器 filters
+- 定义 Vue
+
+```javascript  
+filters: {
+    format(val){
+      if(val){  // 向服务器请求数据 会有延迟 直接使用 会报错
+        return val.replace(/\\n/g, '<br>')
+      }
+      return 'hello there is summary later'  
+    }
+  }
+```
+
+- 组件中使用
+
+```html  
+<!-- template 不产生多余的标签 -->
+<template v-slot:after>
+  <span class='num'>{{"+" + item.nums}}</span>
+</template>
+```

@@ -1,29 +1,23 @@
 <template>
-<div class="tag_container">
-  <slot name='before'></slot>
-  <text>{{text}}</text>
-  <!-- 插槽 -->
-  <slot name="after"></slot>
-
-</div>
+  <div class="tag_container">
+    <slot name="before"></slot>
+    <span>{{text}}</span>
+    <!-- 插槽 -->
+    <slot name="after"></slot>
+  </div>
 </template>
 
 <script>
 export default {
-name:"tag",
-props: {
-  text: String
-},
-created(){
-  console.log(this.text)
-}
-
-
-}
+  name: "tag",
+  props: {
+    text: String
+  }
+};
 </script>
 
 <style lang='scss' scoped>
-.tag_container{
+.tag_container {
   padding: 3px 4px;
   background-color: #f5f5f5;
   color: #666;

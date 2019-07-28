@@ -1,13 +1,17 @@
 <template>
   <div @click="onLike" class="container">
-    <img :src="like1 ? yesSrc : noSrc" alt />
-    <span>{{count1}}</span>
+    <img :src="like ? yesSrc : noSrc" alt />
+    <span>{{count}}</span>
   </div>
 </template>
 
 <script>
 export default {
   name: "like",
+  props: {
+    likeStatus: Boolean,
+    likeCount: Number
+  },
   data(){
     return {
       count: 0,
@@ -16,29 +20,16 @@ export default {
       noSrc: require('./images/like@dis.png')
     }
   },
-  computed: {
-    like1(){
-      let like = this.$store.getters.classic.like_status
-      this.like = like
-      return like
-    },
-    count1(){
-      let count = this.$store.getters.classic.fav_nums
-      this.count = count
-      return count
-    }
+  created(){
+    // this.like = true
+    // this.count = 40
   },
-
   methods: {
     onLike(e){
       let count = this.count
       let like = this.like
       this.count = like ? count - 1 : count + 1
       this.like = !like
-      this.$store.commit('changeLikeCount',{
-        fav_nums: this.count,
-        like_status: this.like
-      })
       let behavior = this.like ? 'like' : 'cancel'
       this.$emit('like', behavior)
     }

@@ -20,7 +20,7 @@ export default {
   methods: {
     onClick(event) {
       const bid = this.book.id;
-      this.$router.push({ name: "book-detail", params: { bid } });
+      this.$router.push(`/book-detail/${bid}`);
     }
   }
 };

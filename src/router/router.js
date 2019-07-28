@@ -29,7 +29,7 @@ export default [
     }
   },
   {
-    path: '/book-detail',
+    path: '/book-detail/:bid',
     name: 'book-detail',
     component: () => import('../views/book-detail.vue'),
     meta: {

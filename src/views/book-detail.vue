@@ -1,23 +1,65 @@
 <template>
   <div class="book_com_container">
     <div class="head">
-      <img :src="book.image || {}" alt />
+      <img :src="book.image" alt="this a book image" />
       <span class="title">{{book.title}}</span>
-      <span class="author">{{book.author[0]}}</span>
+      <span class="author">{{author}}</span>
     </div>
-
+    <!-- 短评 -->
     <div class="sub-container">
       <span class="headline">短评</span>
-      <Tag v-for='(item, index) of comments.comments' :key='index' :text='item.content' />
+      <div class="comment_container">
+        <Tag class="com_tag" v-for="(item, index) of comments" :key="index" :text="item.content">
+          <template v-slot:after>
+            <span class="num">{{"+" + item.nums}}</span>
+          </template>
+        </Tag>
+      </div>
+    </div>
+    <!-- 内容简介 -->
+    <div class="sub-container">
+      <span class="headline">内容简介</span>
+      <div class="content" v-html="$options.filters.format(book.summary)"></div>
+    </div>
+
+    <!-- 书本信息 -->
+    <div class="sub-container">
+      <span class="headline">书本信息</span>
+      <div class="detail-container">
+        <div class="vertical description">
+          <span>出版社</span>
+          <span>出版年</span>
+          <span>页数</span>
+          <span>定价</span>
+          <span>装帧</span>
+        </div>
+
+        <div class="vertical">
+          <span>{{book.publisher}}</span>
+          <span>{{book.pubdate}}</span>
+          <span>{{book.pages}}</span>
+          <span>{{book.price}}</span>
+          <span>{{book.binding}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 输入短评 -->
+    <div class="post-container">
+      <div class="post-fake">
+        <span>输入短评</span>
+      </div>
+      <div class="like-container">
+        <Like @like='onLike' class='like' />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { BookModel } from "../models/book";
-import { Promise } from "q";
-import Tag from '../components/tag'
-
+import Tag from "../components/tag";
+import Like from '../components/like'
 const bookModel = new BookModel();
 
 export default {
@@ -25,15 +67,17 @@ export default {
   data() {
     return {
       comments: [],
-      book: null,
+      book: {},
+      author: "author",
       likeStatus: false,
       likeCount: 0
     };
   },
   components: {
-    Tag
+    Tag,
+    Like
   },
-  activated(e) {
+  activated() {
     const bid = this.$route.params.bid;
     const detail = bookModel.getDetail(bid);
     const comments = bookModel.getComments(bid);
@@ -42,10 +86,28 @@ export default {
     Promise.all([detail, comments, likeStatus]).then(res => {
       console.log(res);
       (this.book = res[0]),
+        (this.author = res[0].author[0]),
         (this.comments = res[1].comments),
         (this.likeStatus = res[2].like_status),
         (this.likeCount = res[2].fav_nums);
     });
+  },
+  methods: {
+    onLike(){
+      
+    }
+  },
+  filters: {
+    format(val) {
+      if (val) {
+        // 向服务器请求数据 会有延迟 直接使用 会报错
+        return val.replace(
+          /\\n/g,
+          "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        );
+      }
+      return "hello there is summary later";
+    }
   }
 };
 </script>
@@ -64,7 +126,8 @@ export default {
     align-items: center;
     .title {
       color: #2f2f2f;
-      margin-top: 6px;
+      margin-top: 3px;
+      margin-bottom: 3px;
       font-size: 16px;
       font-weight: 600;
     }
@@ -90,99 +153,86 @@ export default {
     background-color: #fff;
     padding: 10px;
     .headline {
-    font-size: 14px;
-    font-weight: 600;
-    color: #2f2f2f;
-    margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2f2f2f;
+      margin-bottom: 12px;
     }
-  }
+    .comment_container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      .com_tag {
+        margin-right: 10px;
+        margin-bottom: 10px;
+        .num {
+          margin-left: 4px;
+          font-size: 14px;
+          color: #aaa;
+        }
+      }
+      /* 比较霸道 */
+      .com_tag:nth-child(1) {
+        background-color: #fffbdd;
+      }
 
-  .shadow {
-    color: #999;
-  }
-  .comment-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .comment-container v-tag {
-    margin-right: 15rpx;
-    margin-bottom: 10rpx;
-  }
-
-  .content {
-    text-indent: 58rpx;
+      .com_tag:nth-child(2) {
+        background-color: #eefbff;
+      }
+    }
+    .content {
+    text-indent: 2rem;
     font-weight: 500;
   }
-
-  .num {
-    margin-left: 10rpx;
-    font-size: 22rpx;
-    color: #aaa;
-  }
-
-  /* 比较霸道 */
-  /* .comment-container > v-tag:nth-child(1) > view{
-  background-color: #fffbdd;
-}
-
-.comment-container > v-tag:nth-child(2) > view{
-  background-color: #eefbff;
-} */
-
-  .ex-tag1 {
-    background-color: #fffbdd !important;
-  }
-  .ex-tag2 {
-    background-color: #eefbff !important;
   }
 
   .detail-container {
     width: 100%;
     display: flex;
+    padding-left: 80px;
     flex-direction: row;
     justify-content: flex-start;
-    margin-bottom: 100rpx;
-    font-size: 28rpx;
+    margin-bottom: 30px;
+    font-size: 14px;
     color: #666;
-  }
-
-  .vertical {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .description {
-    color: #999;
-    margin-right: 30rpx;
+    .vertical {
+      display: flex;
+      flex-direction: column;
+    }
+    .description {
+      color: #999;
+      margin-right: 12px;
+    }
   }
 
   .post-container {
-    height: 100rpx;
+    height: 40px;
     box-shadow: 1px -1px 1px #e3e3e3;
     position: fixed;
-    width: 690rpx;
+    width: 550px;
+    box-sizing: border-box;
     background-color: #fff;
     bottom: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0 30rpx;
+    padding: 0 20px;
     justify-content: space-between;
     /* z-index: 99; */
-  }
-
-  .post-fake {
+    .post-fake {
+    height: 30px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 60rpx;
-    width: 460rpx;
+    width: 350px;
     border: 1px solid #999;
     border-radius: 15px;
-    font-size: 22rpx;
-    padding-left: 20rpx;
+    font-size: 13px;
+    padding-left: 12px;
   }
+  }
+
+  
 
   .like {
     margin-right: 30rpx;
@@ -207,18 +257,16 @@ export default {
     background-color: #fff;
     width: 100%;
     z-index: 999;
-  }
-
-  .like {
-    margin-right: 30rpx;
-    margin-top: 10rpx;
-  }
-
-  .like-container {
+    .like-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    .like {
+    margin-right: 14px;
+    margin-top: 6px;
+  }
+  }
   }
 
   .share-btn {
@@ -232,7 +280,7 @@ export default {
     height: 40rpx;
   }
 
-  .posting-container .comment-container {
+  .posting-container .comment_container {
     width: 690rpx;
     padding: 0 30rpx;
   }
@@ -276,11 +324,11 @@ export default {
     color: #aaa;
   }
 
-  .comment-container > tag-cmp:first-child view {
+  .comment_container > tag-cmp:first-child view {
     background-color: #fffbdd;
   }
 
-  /* .comment-container > tag-cmp:nth-child(2) view{
+  /* .comment_container > tag-cmp:nth-child(2) view{
    background-color: #eefbff;
 } */
 
@@ -294,11 +342,11 @@ export default {
     border-radius: 15px !important;
   }
 
-  .comment-container > tag-cmp:nth-child(2) view {
+  .comment_container > tag-cmp:nth-child(2) view {
     background-color: #eefbff !important;
   }
 
-  .posting-container .comment-container {
+  .posting-container .comment_container {
     padding: 40rpx 30rpx 0 30rpx;
   }
 

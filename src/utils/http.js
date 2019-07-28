@@ -7,15 +7,17 @@ const tips = {
 }
 
 class HTTP {
-  request(params){
+  request({url, data={}, method="GET"}){
+    return new Promise((resolve, reject) => {
+      this._request(url, resolve, reject, data, method)
+    })
+  }
+  _request(url, resolve, reject, data={}, method="GRT"){
     // url, data, method
-    if(!params.method){
-      params.method = "GET"
-    }
     axios({
-      url:  '/api' + params.url,
-      method: params.method,
-      data: params.data,
+      url:  '/api/' + url,
+      method: method,
+      data: data,
       headers: {
         'content-type': "application/json",
         "appkey": config.appkey
@@ -24,14 +26,11 @@ class HTTP {
     .then(res => {
       let code = res.status.toString()
       if(code.startsWith('2')){
-        params.success && params.success(res)
-        // Message({
-        //   type: "success",
-        //   message: "有新的数据更新 @ @", 
-        // })
+        resolve(res.data)
       }
     },
       err => {
+        reject()
         this._show_error(err)
     }) 
   }

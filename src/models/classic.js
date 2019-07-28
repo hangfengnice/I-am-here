@@ -1,13 +1,9 @@
 import {HTTP} from '../utils/http'
 
 class ClassicModel extends HTTP{
-  getLatest(sCallback){
-    this.request({
-      url: 'classic/latest',
-      success: res => {
-        sCallback(res)
-        this._setLatestIndex(res.data.index)
-      }
+  getLatest(){
+   return this.request({
+      url: 'classic/latest'
     })
   }
 
@@ -16,7 +12,7 @@ class ClassicModel extends HTTP{
     let key = nextOrPrevious == 'next' ? this._getKey(index + 1) : this._getKey(index - 1);
     let classic = JSON.parse(localStorage.getItem(key))
     if(!classic){
-      this.request({
+     return this.request({
         url: `classic/${index}/${nextOrPrevious}`,
         success: res => {
           localStorage.setItem(this._getKey(res.data.index), JSON.stringify(res.data))
