@@ -5,9 +5,9 @@
       <Like class="like" @like="onLike" :likeStatus="Boolean(likeStatus)" :likeCount="likeCount" />
     </div>
 
-    <Movie :img='classic.image' :content='classic.content' v-if="classic.type == 100" />
-    <Music :img='classic.image' :content='classic.content' v-if="classic.type == 200" />
-    <Essay :img='classic.image' :content='classic.content' v-if="classic.type == 300" />
+    <Movie :img="classic.image" :content="classic.content" v-if="classic.type == 100" />
+    <Music :img="classic.image" :content="classic.content" v-if="classic.type == 200" />
+    <Essay :img="classic.image" :content="classic.content" v-if="classic.type == 300" />
 
     <Navi @left="onNext" @right="onPrevious" class="navi" :first="first" :latest="latest" />
 
@@ -51,19 +51,17 @@ export default {
   },
   created() {
     classicModel.getLatest().then(res => {
+      console.log(res);
+      this._setLatestIndex(res.index);
+      // 缓存
+      let key = this._getKey(res.index);
+      localStorage.setItem(key, JSON.stringify(res));
 
-      console.log(res)
-      // if(res.data){
-      
-      // this._getLikeStatus(res.data.id, res.data.type);
-      // this.classic = res.data;
-      // (this.likeStatus = res.data.like_status);
-      // (this.likeCount = res.data.fav_nums);
-      // this.likeStatus = true
-      // this.likeCount = 42
-      // }
-    }
-    )
+      this._getLikeStatus(res.id, res.type);
+      this.classic = res;
+      this.likeStatus = res.like_status;
+      this.likeCount = res.fav_nums;
+    });
   },
   methods: {
     onLike(e) {
@@ -77,20 +75,60 @@ export default {
     },
 
     _updateClassic(nextOrPrevious) {
+      // 取得当前编号
       let index = this.classic.index;
-      classicModel.getClassic(index, nextOrPrevious, res => {
-        this._getLikeStatus(res.id, res.type);
-        this.classic = res;
-        this.latest = classicModel.isLatest(res.index);
-        this.first = classicModel.isFirst(res.index);
-      });
+      // key 确定 key
+      let key =
+        nextOrPrevious == "next" ? this._getKey(index + 1) : this._getKey(index - 1);
+      let classic = JSON.parse(localStorage.getItem(key));
+      if (!classic) {
+        classicModel.getClassic(index, nextOrPrevious).then(res => {
+          // 将新的值存入缓存
+          localStorage.setItem(this._getKey(res.index),JSON.stringify(res))
+          this._getLikeStatus(res.id, res.type);
+          this.classic = res;
+          this.latest = classicModel.isLatest(res.index);
+          this.first = classicModel.isFirst(res.index);
+        });
+      } else {
+        // 缓存中读取
+        this._getLikeStatus(classic.id, classic.type);
+        this.classic = classic;
+        this.latest = this.isLatest(classic.index);
+        this.first = this.isFirst(classic.index);
+      }
     },
 
     _getLikeStatus(artID, category) {
-      likeModel.getClassicLikeStatus(artID, category, res => {
-        (this.likeStatus = res.data.like_status);
-        (this.likeCount = res.data.fav_nums);
+      likeModel.getClassicLikeStatus(artID, category)
+      .then(res => {
+        this.likeStatus = res.like_status;
+        this.likeCount = res.fav_nums;
       });
+    },
+
+    // 存到localstorage
+    // 把当前期刊 值 存到 Storage
+    _setLatestIndex(index) {
+      localStorage.setItem("latest", index);
+    },
+    // 取值
+    _getLatestIndex() {
+      let index = localStorage.getItem("latest");
+      return index;
+    },
+
+    _getKey(index) {
+      let key = "classic-" + index;
+      return key;
+    },
+    // 当前是什么位置
+    isFirst(index) {
+      return index == 1 ? true : false;
+    },
+    isLatest(index) {
+      let latestIndex = this._getLatestIndex();
+      return index == latestIndex ? true : false;
     }
   }
 };

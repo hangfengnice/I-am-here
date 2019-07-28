@@ -20,9 +20,13 @@ export default {
       noSrc: require('./images/like@dis.png')
     }
   },
-  created(){
-    // this.like = true
-    // this.count = 40
+  watch: {
+    likeStatus(newVal,old){
+      this.like = newVal
+    },
+    likeCount(newVal,old){
+      this.count = newVal
+    },
   },
   methods: {
     onLike(e){

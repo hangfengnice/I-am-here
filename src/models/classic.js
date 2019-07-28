@@ -7,21 +7,18 @@ class ClassicModel extends HTTP{
     })
   }
 
-  getClassic(index, nextOrPrevious, sCallback){
+  getClassic(index, nextOrPrevious){
     // 缓存 localStorage
-    let key = nextOrPrevious == 'next' ? this._getKey(index + 1) : this._getKey(index - 1);
-    let classic = JSON.parse(localStorage.getItem(key))
-    if(!classic){
-     return this.request({
-        url: `classic/${index}/${nextOrPrevious}`,
-        success: res => {
-          localStorage.setItem(this._getKey(res.data.index), JSON.stringify(res.data))
-          sCallback(res.data)
-        }
-      })
-    }else{
-      sCallback(classic)
-    }
+    return this.request({
+      url: `classic/${index}/${nextOrPrevious}`
+    })
+    // let key = nextOrPrevious == 'next' ? this._getKey(index + 1) : this._getKey(index - 1);
+    // let classic = JSON.parse(localStorage.getItem(key))
+    // if(!classic){
+     
+    // }else{
+    //   sCallback(classic)
+    // }
 
   }
 
