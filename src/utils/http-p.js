@@ -16,14 +16,15 @@ class HTTP {
   _request(url, resolve, reject, data={}, method="GET"){
     axios({
       url:  '/api' + url,
-      method: method,
-      data: data,
+      method,
       headers: {
         'content-type': "application/json",
         "appkey": config.appkey
-      }
+      },
+      data
     })
     .then(res => {
+      console.log(res)
       const code = res.status.toString()
       if(code.startsWith('2')){
         resolve(res.data)

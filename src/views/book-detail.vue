@@ -7,7 +7,8 @@
     </div>
     <!-- 短评 -->
     <div class="sub-container">
-      <span class="headline">短评</span>
+      <span class="headline" v-if="comments.length > 0">短评</span>
+      <span class="shadow" v-else>还没有短评</span>
       <div class="comment_container">
         <Tag class="com_tag" v-for="(item, index) of comments" :key="index" :text="item.content">
           <template v-slot:after>
@@ -45,7 +46,7 @@
     </div>
 
     <!-- 输入短评 -->
-    <div class="post-container" v-if='!posting'>
+    <div class="post-container" v-if="!posting">
       <div @click="onFakePost" class="post-fake">
         <span>输入短评</span>
       </div>
@@ -58,29 +59,43 @@
     <!-- 点击出现的区域 真正的评论框 -->
     <div class="posting-container" v-else>
       <div class="post-header">
-        <span>点击可以 +1</span>
-        <span @click='onCancel' class="cancel">取消</span>
+        <span v-if="comments.length > 0">点击可以 +1</span>
+        <span v-else>暂无标签</span>
+        <span @click="onCancel" class="cancel">取消</span>
       </div>
       <div class="comment_container">
-        <Tag class="com_tag" v-for="(item, index) of limit(comments, 3)" :key="index" :text="item.content">
+        <Tag
+          @tapping="onTagPost"
+          class="com_tag"
+          v-for="(item, index) of limit(comments, 3)"
+          :key="index"
+          :text="item.content"
+        >
           <template v-slot:after>
             <span class="num">{{"+" + item.nums}}</span>
           </template>
         </Tag>
       </div>
-      <input type="text" placeholder="评论最多12字符" class="post" />
+      <input
+        @keyup.enter="onInputPost"
+        v-model="inputValue"
+        type="text"
+        placeholder="评论最多12字符"
+        class="post"
+      />
     </div>
     <!-- mask 蒙层  -->
-    <MaskFull v-if='posting' />
+    <MaskFull v-if="posting" />
   </div>
 </template>
 
 <script>
 import { BookModel } from "../models/book";
 import { LikeModel } from "../models/like";
+import { Loading } from "element-ui";
 import Tag from "../components/tag";
 import Like from "../components/like";
-import MaskFull from '../components/mask'
+import MaskFull from "../components/mask";
 
 const bookModel = new BookModel();
 const likeModel = new LikeModel();
@@ -93,7 +108,8 @@ export default {
       author: "author",
       likeStatus: false,
       likeCount: 0,
-      posting: false
+      posting: false,
+      inputValue: ""
     };
   },
   components: {
@@ -102,13 +118,19 @@ export default {
     MaskFull
   },
   activated() {
+    let loadingInstance = Loading.service({
+      text: 'loading... @ @'
+    });
     const bid = this.$route.params.bid;
     const detail = bookModel.getDetail(bid);
     const comments = bookModel.getComments(bid);
     const likeStatus = bookModel.getLikeStatus(bid);
 
     Promise.all([detail, comments, likeStatus]).then(res => {
-      console.log(res);
+      this.$nextTick(() => {
+        // 以服务的方式调用的 Loading 需要异步关闭
+        loadingInstance.close();
+      });
       (this.book = res[0]),
         (this.author = res[0].author[0]),
         (this.comments = res[1].comments),
@@ -123,12 +145,49 @@ export default {
     onFakePost() {
       this.posting = true;
     },
-    onCancel(){
-      this.posting = false
+    onCancel() {
+      this.posting = false;
     },
-    limit(array, length){
-      console.log(array)
-      return array.slice(0, length)
+    limit(array, length) {
+      return array.slice(0, length);
+    },
+    onTagPost(e) {
+      this.onPost(e);
+    },
+    onInputPost() {
+      this.onPost(this.inputValue);
+    },
+    onPost(val) {
+      const comment = val;
+      if (!comment) {
+        return;
+      }
+      if (comment.length > 12) {
+        this.$notify.warning({
+          title: "温馨小提示",
+          duration: 2000,
+          message: "最多只能填写12个字符 @ @"
+        });
+        return;
+      }
+      this.$notify.success({
+        title: "温馨小提示",
+        duration: 2000,
+        message: "信息提交中 请稍后"
+      });
+
+      bookModel.postComment(this.book.id, comment).then(res => {
+        this.comments.unshift({
+          content: comment,
+          nums: 1
+        });
+        this.posting = false;
+        this.$notify.success({
+          title: "温馨小提示",
+          duration: 2000,
+          message: "信息添加成功 +1 @ @"
+        });
+      });
     }
   },
   filters: {
@@ -194,11 +253,15 @@ export default {
       color: #2f2f2f;
       margin-bottom: 12px;
     }
+    .shadow {
+      color: #999;
+    }
     .comment_container {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       .com_tag {
+        // z-index: 2;
         margin-right: 10px;
         margin-bottom: 10px;
         .num {
@@ -309,14 +372,15 @@ export default {
     .comment_container {
       width: 550px;
       padding: 16px 30px;
-      .com_tag{
+      .com_tag {
         margin-right: 8px;
+        padding: 3px 3px;
       }
       .num {
-          margin-left: 4px;
-          font-size: 14px;
-          color: #aaa;
-        }
+        margin-left: 4px;
+        font-size: 14px;
+        color: #aaa;
+      }
       .com_tag:nth-child(1) {
         background-color: #fffbdd;
       }

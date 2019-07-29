@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container" v-if='!searching'>
       <div class="header">
-        <div class="box">
+        <div class="box" @click='onSearching'>
           <img src="../../src/assets/images/icon/search.png" alt />
           <span>搜索书籍</span>
         </div>
@@ -15,13 +15,18 @@
         </div>
       </div>
     </div>
+    <!-- Search -->
+    <Search @cancel='onCancel' v-else/>
     <TabBar />
+
+  
   </div>
 </template>
 
 <script>
 import TabBar from "../components/tabBar";
 import Book from "../components/book";
+import Search from '../components/search'
 import { BookModel } from "../models/book";
 
 let bookModel = new BookModel();
@@ -29,11 +34,13 @@ export default {
   name: "tabbar",
   components: {
     TabBar,
-    Book
+    Book,
+    Search
   },
   data() {
     return {
-      books: []
+      books: [],
+      searching: false
     };
   },
   created() {
@@ -41,6 +48,14 @@ export default {
       console.log(res);
       this.books = res;
     });
+  },
+  methods: {
+    onSearching(){
+      this.searching = true
+    },
+    onCancel(){
+      this.searching = false
+    }
   }
 };
 </script>

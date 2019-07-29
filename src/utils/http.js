@@ -17,7 +17,7 @@ class HTTP {
     axios({
       url:  '/api/' + url,
       method: method,
-      data: data,
+      data,
       headers: {
         'content-type': "application/json",
         "appkey": config.appkey

@@ -86,3 +86,11 @@ filters: {
   <span class='num'>{{"+" + item.nums}}</span>
 </template>
 ```
+
+- input 与键盘修饰符
+  - keyup
+  - v-model
+
+- models模块
+  - 处理业务
+  - 位置的放置

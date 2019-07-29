@@ -1,6 +1,6 @@
 <template>
   <div @click="onClick" class="book-container">
-    <img :src="book.image && book.image" alt />
+    <img :src="book.image" alt />
     <div class="description">
       <span class="title">{{book.title}}</span>
       <span class="author">{{book.author}}</span>
