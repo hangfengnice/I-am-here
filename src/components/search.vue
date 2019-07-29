@@ -11,7 +11,7 @@
           class="bar"
           autofocus
         />
-        <img @click='onDelete' src="./images/cancel.png" alt class="cancel-img" />
+        <img @click="onDelete" src="./images/cancel.png" alt class="cancel-img" />
       </div>
       <div @click="onCancel" class="cancel">取消</div>
     </div>
@@ -23,7 +23,13 @@
           <span>历史搜索</span>
         </div>
         <div class="tags">
-          <Tag @tapping='onConfirm' class="tag" v-for="(item, index) of historyWords" :key="index" :text="item" />
+          <Tag
+            @tapping="onConfirm"
+            class="tag"
+            v-for="(item, index) of historyWords"
+            :key="index"
+            :text="item"
+          />
         </div>
       </div>
 
@@ -33,14 +39,23 @@
           <span>热门搜索</span>
         </div>
         <div class="tags">
-          <Tag @tapping='onConfirm' class="tag" v-for="(item, index) of hotWords" :key="index" :text="item" />
+          <Tag
+            @tapping="onConfirm"
+            class="tag"
+            v-for="(item, index) of hotWords"
+            :key="index"
+            :text="item"
+          />
         </div>
       </div>
     </div>
 
-    <div class="books-container" v-else>
+    <div class="books-container" v-else ref="sBook">
       <Book v-for="(item, index) of dataArray" :key="index" :book="item" class="book"></Book>
     </div>
+
+    <LoadingCss class='loading' v-if='loading' />
+
   </div>
 </template>
 
@@ -48,25 +63,30 @@
 import { KeywordModel } from "../models/keyword";
 import { BookModel } from "../models/book";
 import { Loading } from "element-ui";
+import { paginationBev } from "./behaviors/pagination";
 import Tag from "../components/tag";
 import Book from "../components/book";
+import LoadingCss from '../components/loading'
 
 const keywordModel = new KeywordModel();
 const bookModel = new BookModel();
 export default {
+  mixins: [paginationBev],
   name: "search",
   data() {
     return {
       inputValue: "",
       historyWords: [],
       hotWords: [],
-      dataArray: [],
-      searching: false
+      searching: false,
+      q: "",
+      loading: false
     };
   },
   components: {
     Tag,
-    Book
+    Book,
+    LoadingCss
   },
   created() {
     this.historyWords = keywordModel.getHistory();
@@ -79,22 +99,77 @@ export default {
       this.$emit("cancel");
     },
     onConfirm(e) {
-      this.searching = true;
-      let loadingInstance = Loading.service({
-      text: 'loading... @ @'
-      });
+      this._showResult()
+      this.initialize();
       const q = this.inputValue || e;
-      this.inputValue = q
+      let loadingInstance = Loading.service({
+        text: `loading... ${q} 的相关作品 @..@.`
+      });
+      this.inputValue = q;
       bookModel.search(0, q).then(res => {
         this.$nextTick(() => loadingInstance.close());
-        this.dataArray = res.books;
+        // this.dataArray = res.books;
+        this.setMoreData(res.books);
+        this.setTotal(res.total);
         keywordModel.addToHistory(q);
+        this.q = q;
       });
     },
-    onDelete(){
-      this.searching = false
-      this.inputValue = ''
+    _showResult(){
+      this.searching = true;
+    },
+    _closeResult(){
+      this.searching = false;
+    },
+    onDelete() {
+      this._closeResult()
+      this.inputValue = "";
+    },
+    handleScroll() {
+      let clientHeight = document.documentElement.clientHeight;
+      let clientBottom =
+        this.$refs.sBook && this.$refs.sBook.getBoundingClientRect().bottom;
+      if (clientBottom == clientHeight) {
+        this.loadMore();
+      }
+    },
+    loadMore() {
+      if (!this.q) {
+        return;
+      }
+      if (this._isLocked()) {
+        return;
+      }
+      if (this.hasMore()) {
+        this._locked()
+        bookModel.search(this.getCurrentStart(), this.q).then(res => {
+          this.setMoreData(res.books);
+          this._unLocked()
+        },() => {
+          this._unLocked()  // 请求失败也解锁
+        });
+      }
+    },
+
+    _isLocked(){
+      return this.loading ? true : false
+    },
+
+    _locked(){
+      this.loading = true
+    },
+
+    _unLocked(){
+      this.loading = false
     }
+
+  },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
@@ -186,17 +261,17 @@ export default {
     margin-top: 90px;
   }
   .books-container {
-  width: 400px;
-  margin-top: 60px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  // padding: 0 9px 0 90rpx;
-  justify-content: space-between;
-  .book{
-  margin-bottom: 15px;
-}
-}
+    width: 400px;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    // padding: 0 9px 0 90rpx;
+    justify-content: space-between;
+    .book {
+      margin-bottom: 15px;
+    }
+  }
 }
 
 .title {
@@ -206,8 +281,6 @@ export default {
   align-items: center;
   /* margin-left:100px; */
 }
-
-
 
 .loading {
   margin: 50rpx 0 50rpx 0;

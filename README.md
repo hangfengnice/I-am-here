@@ -20,11 +20,12 @@ npm start
 ## 项目细节
 
 - 实时显示时间
+
   - setInterval
 
   ```javascript
   timeNow(){
-      clearInterval(this.timer)  // 清除定时器  
+      clearInterval(this.timer)  // 清除定时器
       this.timer = null
       this.timeFormat(new Date())
       this.timer = setInterval(this.timeNow,10*1000)
@@ -32,11 +33,12 @@ npm start
   ```
 
 - img 动态引入
- `<img :src="false ? require('./images/like.png') : require('./images/like@dis.png')" alt />`
+  `<img :src="false ? require('./images/like.png') : require('./images/like@dis.png')" alt />`
 
 - axios
 
 - mixins
+
   - 解决重复问题
 
 - 封装函数 理解 变相的注释 易读
@@ -46,51 +48,77 @@ npm start
 - flex 布局 && 绝对定位 fixed 定位
 
 - 组件传参
+
   - `this.$router.push({ name: "book-detail", params: { bid } });`
   - 组件中接受 `this.$route`
 
 - keep-alive
+
   - activated(每一次页面进入都会执行)
 
 - 插槽 slot (vue 2.6)
 
-```html  
+```html
 <!-- template 不产生多余的标签 -->
 <template v-slot:after>
-  <span class='num'>{{"+" + item.nums}}</span>
+  <span class="num">{{"+" + item.nums}}</span>
 </template>
 ```
 
 - 转义字符 \
+
   - \\n
 
 - 过滤器 filters
 - 定义 Vue
 
-```javascript  
+```javascript
 filters: {
     format(val){
       if(val){  // 向服务器请求数据 会有延迟 直接使用 会报错
         return val.replace(/\\n/g, '<br>')
       }
-      return 'hello there is summary later'  
+      return 'hello there is summary later'
     }
   }
 ```
 
 - 组件中使用
 
-```html  
+```html
 <!-- template 不产生多余的标签 -->
 <template v-slot:after>
-  <span class='num'>{{"+" + item.nums}}</span>
+  <span class="num">{{"+" + item.nums}}</span>
 </template>
 ```
 
 - input 与键盘修饰符
+
   - keyup
   - v-model
 
-- models模块
+- models 模块
+
   - 处理业务
   - 位置的放置
+
+- scroll 滑动到底部
+
+```javascript
+    handleScroll(){
+      // 当前可视窗口的高度
+      let clientHeight = document.documentElement.clientHeight
+      // 当前元素底部距离 窗口头部的距离
+      let clientBottom = this.$refs.sBook.getBoundingClientRect().bottom
+      if(clientBottom == clientHeight){
+        console.log('到底了')
+      }
+    }
+    mounted(){     // 监听滑动
+    window.addEventListener('scroll',this.handleScroll)
+    },
+
+    destroyed () {   // 取消监听事件
+    window.removeEventListener('scroll', this.handleScroll)
+    },
+```
