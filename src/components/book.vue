@@ -5,7 +5,7 @@
       <span class="title">{{book.title}}</span>
       <span class="author">{{book.author}}</span>
       <div class="foot">
-        <span class="footer">{{book.fav_nums}} 喜欢</span>
+        <span v-if='!show' class="footer">{{book.fav_nums}} 喜欢</span>
       </div>
     </div>
   </div>
@@ -15,7 +15,8 @@
 export default {
   name: "com_book",
   props: {
-    book: Object
+    book: Object,
+    show: Boolean
   },
   methods: {
     onClick(event) {

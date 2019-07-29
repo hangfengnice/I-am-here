@@ -10,7 +10,8 @@ export default {
   name: "like",
   props: {
     likeStatus: Boolean,
-    likeCount: Number
+    likeCount: Number,
+    readonly: Boolean
   },
   data(){
     return {
@@ -30,6 +31,9 @@ export default {
   },
   methods: {
     onLike(e){
+      if(this.readonly){
+        return
+      }
       let count = this.count
       let like = this.like
       this.count = like ? count - 1 : count + 1

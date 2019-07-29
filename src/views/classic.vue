@@ -1,15 +1,22 @@
 <template>
   <div class="classic">
     <div class="header">
-      <Episode class="episode" />
-      <Like class="like" @like="onLike" :likeStatus="Boolean(likeStatus)" :likeCount="likeCount" />
+      <Episode class="episode" :classic='classic'/>
+      <div class="like-container">
+        <Like class="like" @like="onLike" :likeStatus="Boolean(likeStatus)" :likeCount="likeCount" />
+        <ImgButton @fromChild='toTell'>
+          <template v-slot:img>
+            <img slot="img" src="../assets/images/icon/share.png" alt class="share" />
+          </template>
+        </ImgButton>
+      </div>
     </div>
 
     <Movie :img="classic.image" :content="classic.content" v-if="classic.type == 100" />
     <Music :img="classic.image" :content="classic.content" v-if="classic.type == 200" />
     <Essay :img="classic.image" :content="classic.content" v-if="classic.type == 300" />
 
-    <Navi @left="onNext" @right="onPrevious" class="navi" :first="first" :latest="latest" />
+    <Navi :title='classic.title' @left="onNext" @right="onPrevious" class="navi" :first="first" :latest="latest" />
 
     <TabBar />
   </div>
@@ -23,6 +30,7 @@ import Essay from "../components/classic/essay";
 import Navi from "../components/navi";
 import TabBar from "../components/tabBar";
 import Episode from "../components/episode";
+import ImgButton from "../components/imgButton";
 import { ClassicModel } from "../models/classic";
 import { LikeModel } from "../models/like";
 
@@ -38,7 +46,8 @@ export default {
     Navi,
     Music,
     Essay,
-    TabBar
+    TabBar,
+    ImgButton
   },
   data() {
     return {
@@ -79,12 +88,14 @@ export default {
       let index = this.classic.index;
       // key 确定 key
       let key =
-        nextOrPrevious == "next" ? this._getKey(index + 1) : this._getKey(index - 1);
+        nextOrPrevious == "next"
+          ? this._getKey(index + 1)
+          : this._getKey(index - 1);
       let classic = JSON.parse(localStorage.getItem(key));
       if (!classic) {
         classicModel.getClassic(index, nextOrPrevious).then(res => {
           // 将新的值存入缓存
-          localStorage.setItem(this._getKey(res.index),JSON.stringify(res))
+          localStorage.setItem(this._getKey(res.index), JSON.stringify(res));
           this._getLikeStatus(res.id, res.type);
           this.classic = res;
           this.latest = classicModel.isLatest(res.index);
@@ -99,9 +110,16 @@ export default {
       }
     },
 
+    toTell(){
+      this.$notify.info({
+        title: "温馨提示",
+        duration: 2000,
+        message: "不好意思, 分享功能尚未实现 @@"
+      })
+    },
+
     _getLikeStatus(artID, category) {
-      likeModel.getClassicLikeStatus(artID, category)
-      .then(res => {
+      likeModel.getClassicLikeStatus(artID, category).then(res => {
         this.likeStatus = res.like_status;
         this.likeCount = res.fav_nums;
       });
@@ -163,5 +181,18 @@ export default {
 .navi {
   position: absolute;
   bottom: 66px;
+}
+.like-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.share {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 6px;
 }
 </style>

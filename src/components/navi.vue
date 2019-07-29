@@ -11,7 +11,8 @@ export default {
   name: "navi",
   props: {
     latest: Boolean,
-    first: Boolean
+    first: Boolean,
+    title: String
   },
   data() {
     return {
@@ -21,18 +22,6 @@ export default {
       rightSrc: require("./images/triangle@right.png")
     };
   },
-  computed: {
-    lastest1(){
-      let latest = this.$store.state.classic
-    },
-    first1(){
-
-    },
-    title(){
-      return this.$store.state.classic.title
-    }
-  },
-  components: {},
   methods: { 
     onLeft(e){
       if(!this.latest){

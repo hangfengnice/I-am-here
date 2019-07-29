@@ -15,6 +15,9 @@
 <script>
 export default {
   name: "episode",
+  props: {
+    classic: Object
+  },
   data() {
     return {
       months: [
@@ -34,8 +37,8 @@ export default {
     this.month = this.months[month];
   },
   computed: {
-    index() {
-      let index = this.$store.state.classic.index;
+    index () {
+      const index = this.classic.index
       return index < 10 ? "0" + index : index;
     }
   }

@@ -13,6 +13,9 @@ export default {
   props: {
     text: String
   },
+  created(){
+    console.log(this.text)
+  },
   methods: {
     onTap(){
       this.$emit('tapping', this.text)

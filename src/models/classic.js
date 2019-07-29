@@ -12,13 +12,6 @@ class ClassicModel extends HTTP{
     return this.request({
       url: `classic/${index}/${nextOrPrevious}`
     })
-    // let key = nextOrPrevious == 'next' ? this._getKey(index + 1) : this._getKey(index - 1);
-    // let classic = JSON.parse(localStorage.getItem(key))
-    // if(!classic){
-     
-    // }else{
-    //   sCallback(classic)
-    // }
 
   }
 
@@ -31,17 +24,10 @@ class ClassicModel extends HTTP{
     return latestIndex == index ? true : false
   }
 
-  _setLatestIndex(index){
-    localStorage.setItem('latest',index)
-  }
-
-  _getLatestIndex(){
-   return localStorage.getItem('latest')
-  }
-
-  _getKey(index){
-    let key = 'classic' + index
-    return key
+  getMyFavor(){
+    return this.request({
+      url: '/classic/favor'
+    })
   }
 }
 

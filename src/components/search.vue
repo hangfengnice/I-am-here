@@ -51,11 +51,11 @@
     </div>
 
     <div class="books-container" v-else ref="sBook">
-      <Book v-for="(item, index) of dataArray" :key="index" :book="item" class="book"></Book>
+      <Book :show='true' v-for="(item, index) of dataArray" :key="index" :book="item" class="book"></Book>
     </div>
 
     <LoadingCss class='loading' v-if='loading' />
-
+    <span v-if='noResult' class='empty-tip'>没有搜索到书籍</span>
   </div>
 </template>
 
@@ -96,12 +96,14 @@ export default {
   },
   methods: {
     onCancel() {
+      this.initialize();
       this.$emit("cancel");
     },
     onConfirm(e) {
       this._showResult()
       this.initialize();
       const q = this.inputValue || e;
+      this.q = q;
       let loadingInstance = Loading.service({
         text: `loading... ${q} 的相关作品 @..@.`
       });
@@ -112,7 +114,6 @@ export default {
         this.setMoreData(res.books);
         this.setTotal(res.total);
         keywordModel.addToHistory(q);
-        this.q = q;
       });
     },
     _showResult(){
@@ -122,6 +123,7 @@ export default {
       this.searching = false;
     },
     onDelete() {
+      this.initialize();
       this._closeResult()
       this.inputValue = "";
     },
@@ -137,32 +139,19 @@ export default {
       if (!this.q) {
         return;
       }
-      if (this._isLocked()) {
+      if (this.isLocked()) {
         return;
       }
       if (this.hasMore()) {
-        this._locked()
+        this.locked()
         bookModel.search(this.getCurrentStart(), this.q).then(res => {
           this.setMoreData(res.books);
-          this._unLocked()
+          this.unLocked()
         },() => {
-          this._unLocked()  // 请求失败也解锁
+          this.unLocked()  // 请求失败也解锁
         });
       }
-    },
-
-    _isLocked(){
-      return this.loading ? true : false
-    },
-
-    _locked(){
-      this.loading = true
-    },
-
-    _unLocked(){
-      this.loading = false
     }
-
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
