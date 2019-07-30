@@ -21,6 +21,14 @@ export default [
     }
   },
   {
+    path: '/favor',
+    name: 'favor',
+    component: () => import('../views/favor.vue'),
+    meta: {
+      title: 'favor'
+    }
+  },
+  {
     path: '/me',
     name: 'me',
     component: () => import('../views/me.vue'),

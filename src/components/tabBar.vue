@@ -17,7 +17,9 @@ export default {
       data: [
         { title: "流行", icon: "icon-liuxing", path: "/classic" },
         { title: "书籍", icon: "icon-shuji", path: "/book" },
-        { title: "喜欢", icon: "icon-me", path: "/me" },
+        { title: "喜欢", icon: "icon-me", path: "/favor" },
+        { title: "我", icon: "icon-wo", path: "/me" },
+
       ]
     };
   }

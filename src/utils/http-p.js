@@ -24,7 +24,6 @@ class HTTP {
       data
     })
     .then(res => {
-      console.log(res)
       const code = res.status.toString()
       if(code.startsWith('2')){
         resolve(res.data)

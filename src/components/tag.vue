@@ -1,5 +1,5 @@
 <template>
-  <div @click='onTap' class="tag_container">
+  <div @click="onTap" class="tag_container">
     <slot name="before"></slot>
     <span>{{text}}</span>
     <!-- 插槽 -->
@@ -13,12 +13,9 @@ export default {
   props: {
     text: String
   },
-  created(){
-    console.log(this.text)
-  },
   methods: {
-    onTap(){
-      this.$emit('tapping', this.text)
+    onTap() {
+      this.$emit("tapping", this.text);
     }
   }
 };
