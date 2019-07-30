@@ -34,7 +34,29 @@ export default [
     component: () => import('../views/me.vue'),
     meta: {
       title: 'me'
-    }
+    },
+    children: [
+      {
+        path: 'http',
+        name: 'http',
+        component: () => import('../views/me/http.vue'),
+      },
+      {
+        path: 'promise',
+        name: 'promise',
+        component: () => import('../views/me/promise.vue'),
+      },
+      {
+        path: 'slot',
+        name: 'slot',
+        component: () => import('../views/me/slot.vue'),
+      },
+      {
+        path: 'scroll',
+        name: 'scroll',
+        component: () => import('../views/me/scroll.vue'),
+      }
+    ]
   },
   {
     path: '/book-detail/:bid',
