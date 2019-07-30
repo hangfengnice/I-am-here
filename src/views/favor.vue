@@ -56,6 +56,7 @@ export default {
     },
     getMyFavor() {
       classicModel.getMyFavor().then(res => {
+        console.log(res)
         this.classics = res;
       });
     }
@@ -74,6 +75,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 60px;
   .bg {
     width: 550px;
     height: 350px;
@@ -141,6 +143,8 @@ export default {
       justify-content: space-between;
       .preview {
         margin-bottom: 12px;
+        margin-left: 6px;
+        margin-right: 6px;
       }
     }
   }

@@ -16,12 +16,18 @@ import { behavior } from "./mixin";
 export default {
   name: "music",
   mixins: [behavior],
+  props: {
+    src: String
+  },
   data() {
     return {
       playing: false,
       pauseSrc: require("./images/player@pause.png"),
       playSrc: require("./images/player@play.png")
     };
+  },
+  created(){
+    console.log(this.src)
   },
   methods: {
     onPlay() {
@@ -34,12 +40,6 @@ export default {
       
     }
   },
-  computed: {
-    src(){
-      // console.log(this.$store.getter.classic.url)
-      return this.$store.state.classic.url
-    }
-  }
 };
 </script>
 

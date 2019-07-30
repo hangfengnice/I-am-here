@@ -13,7 +13,7 @@
     </div>
 
     <Movie :img="classic.image" :content="classic.content" v-if="classic.type == 100" />
-    <Music :img="classic.image" :content="classic.content" v-if="classic.type == 200" />
+    <Music :img="classic.image" :src='classic.url' :content="classic.content" v-if="classic.type == 200" />
     <Essay :img="classic.image" :content="classic.content" v-if="classic.type == 300" />
 
     <Navi :title='classic.title' @left="onNext" @right="onPrevious" class="navi" :first="first" :latest="latest" />
